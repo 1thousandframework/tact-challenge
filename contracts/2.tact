@@ -30,6 +30,7 @@ contract Task2 with Deployable {
       send(SendParameters{
           to: msg.sender,
           bounce: false,
+          mode: SendPayGasSeparately,
           value: context().value
       });
     }
@@ -39,6 +40,7 @@ contract Task2 with Deployable {
     send(SendParameters{
         to: self.admin,
         bounce: false,
+        mode: SendPayGasSeparately,
         value: context().value,
         body: beginCell().storeAddress(context().sender).endCell()
     });
