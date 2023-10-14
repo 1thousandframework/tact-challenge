@@ -13,7 +13,6 @@ import "@stdlib/deploy";
   In refund transaction, it is important to have a check that the refund message came from the admin address
 */
 
-
 message(0x44) Refund {
   queryId: Int as uint64;
   sender: Address;
@@ -30,6 +29,7 @@ contract Task2 with Deployable {
     if  (msg.sender == self.admin) {
       send(SendParameters{
           to: msg.sender,
+          bounce: false,
           value: context().value
       });
     }
@@ -38,6 +38,7 @@ contract Task2 with Deployable {
   receive(msg: Slice) {
     send(SendParameters{
         to: self.admin,
+        bounce: false,
         value: context().value,
         body: beginCell().storeAddress(context().sender).endCell()
     });
