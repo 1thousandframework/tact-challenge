@@ -7,6 +7,7 @@ import "@stdlib/deploy";
   Also, its needed to implement one getter with name "counter" to get the number from the store.
 */
 
+
 message Add {
   queryId: Int as uint64;
   number: Int as uint32;
