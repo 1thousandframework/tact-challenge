@@ -33,7 +33,7 @@ contract Task1 with Deployable {
     }
 
     get fun counter(): Int {
-      retrun self.counter;
+      return self.counter;
     }
 }
 
