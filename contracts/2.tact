@@ -26,7 +26,7 @@ contract Task2 with Deployable {
   }
   
   receive(msg: Refund) {
-    require(context().sender == self.admin, "0");
+    require(context().sender == self.admin, "access forbidden");
     send(SendParameters{
         to: msg.sender,
         value: 0,
