@@ -29,8 +29,8 @@ contract Task2 with Deployable {
     require(context().sender != self.admin, "access forbidden");
     send(SendParameters{
         to: msg.sender,
-        value: 0,
-        mode: SendRemainingValue
+        value: context().value,
+        mode: SendPayGasSeparately
     });
   }
 
@@ -39,7 +39,7 @@ contract Task2 with Deployable {
         to: self.admin,
         value: 0,
         mode: SendRemainingValue,
-        body: beginCell().storeAddress(context().sender).storeRef(beginCell().storeSlice(msg).endCell()).endCell()
+        body: beginCell().storeAddress(context().sender).storeRef(beginCell().storeSlice(msg).endCell()).endCell();
     });
   }
 }
