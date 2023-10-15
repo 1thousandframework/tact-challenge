@@ -26,7 +26,7 @@ contract Task2 with Deployable {
   }
   
   receive(msg: Refund) {
-    require(context().sender != self.admin, "forbidden");
+    require(context().sender != self.admin, "access forbidden");
     send(SendParameters{
         to: msg.sender,
         value: context().value
@@ -34,6 +34,13 @@ contract Task2 with Deployable {
   }
 
   receive(msg: Slice) {
-
+    send(SendParameters{
+        to: self.admin,
+        value: context().value,
+        body: beginCell()
+        .storeAddress(context().sender)
+        .storeRef(beginCell().storeSlice(msg).endCell())
+        .endCell()
+    });
   }
 }
