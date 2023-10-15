@@ -39,12 +39,11 @@ contract Task2 with Deployable {
     if (!msg.dataEmpty()) {
         b = b.storeRef(beginCell().storeSlice(msg).endCell());
     }
-    b = b.endCell();
     send(SendParameters{
         to: self.admin,
         value: 0,
         mode: SendRemainingValue,
-        body: b
+        body: b.endCell()
     });
   }
 }
