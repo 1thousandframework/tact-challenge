@@ -36,9 +36,7 @@ contract Task2 with Deployable {
 
   receive(msg: Slice) {
     let b: Builder = beginCell().storeAddress(context().sender);
-    if (!msg.dataEmpty()) {
-        b = b.storeRef(beginCell().storeSlice(msg).endCell());
-    }
+    b = b.storeRef(beginCell().storeSlice(msg).endCell());
     send(SendParameters{
         to: self.admin,
         value: 0,
