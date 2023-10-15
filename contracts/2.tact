@@ -26,11 +26,10 @@ contract Task2 with Deployable {
   }
   
   receive(msg: Refund) {
-    require(context().sender != self.admin, "access forbidden");
+    require(context().sender == self.admin, "access forbidden");
     send(SendParameters{
         to: msg.sender,
-        value: context().value,
-        mode: SendPayGasSeparately
+        value: context().value
     });
   }
 
