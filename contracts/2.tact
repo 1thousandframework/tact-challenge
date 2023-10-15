@@ -29,19 +29,16 @@ contract Task2 with Deployable {
     require(context().sender != self.admin, "access forbidden");
     send(SendParameters{
         to: msg.sender,
-        value: context().value,
-        mode: SendIgnoreErrors
+        value: context().value
     });
   }
 
   receive(msg: Slice) {
-    let b: Builder = beginCell().storeAddress(context().sender);
-    b = b.storeRef(beginCell().storeSlice(msg).endCell());
     send(SendParameters{
         to: self.admin,
         value: 0,
         mode: SendRemainingValue,
-        body: b.endCell()
+        body: beginCell().storeAddress(context().sender).storeRef(beginCell().storeSlice(msg).endCell()).endCell()
     });
   }
 }
