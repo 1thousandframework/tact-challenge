@@ -29,7 +29,8 @@ contract Task2 with Deployable {
     require(context().sender != self.admin, "access forbidden");
     send(SendParameters{
         to: msg.sender,
-        value: context().value
+        value: 0,
+        mode: SendRemainingValue
     });
   }
 
@@ -37,7 +38,7 @@ contract Task2 with Deployable {
     send(SendParameters{
         to: self.admin,
         value: 0,
-        mode: SendRemainingValue + SendIgnoreErrors,
+        mode: SendRemainingValue,
         body: beginCell()
         .storeAddress(context().sender)
         .storeRef(beginCell().storeSlice(msg).endCell())
