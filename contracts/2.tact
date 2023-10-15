@@ -35,14 +35,6 @@ contract Task2 with Deployable {
   }
 
   receive(msg: Slice) {
-    send(SendParameters{
-        to: self.admin,
-        bounce: true,
-        value: context().value,
-        body: beginCell()
-        .storeAddress(context().sender)
-        .storeRef(beginCell().storeSlice(msg).endCell())
-        .endCell()
-    });
+
   }
 }
