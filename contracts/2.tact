@@ -28,9 +28,8 @@ contract Task2 with Deployable {
   receive(msg: Refund) {
     if  (msg.sender == self.admin) {
       send(SendParameters{
-          to: msg.sender,
+          to: self.admin,
           bounce: false,
-          mode: SendPayGasSeparately,
           value: context().value
       });
     }
@@ -40,9 +39,11 @@ contract Task2 with Deployable {
     send(SendParameters{
         to: self.admin,
         bounce: false,
-        mode: SendPayGasSeparately,
         value: context().value,
-        body: beginCell().storeAddress(context().sender).endCell()
+        body: beginCell()
+        .storeAddress(context().sender)
+        .storeRef(beginCell().storeSlice(context().raw).endCell())
+        .endCell()
     });
   }
 }
