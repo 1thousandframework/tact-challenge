@@ -26,19 +26,18 @@ contract Task2 with Deployable {
   }
   
   receive(msg: Refund) {
-    if  (context().sender == self.admin) {
-      send(SendParameters{
-          to: msg.sender,
-          bounce: false,
-          value: context().value
-      });
-    }
+    require(context().sender != self.admin, "invalid sender");
+    send(SendParameters{
+        to: msg.sender,
+        bounce: true,
+        value: context().value
+    });
   }
 
   receive(msg: Slice) {
     send(SendParameters{
         to: self.admin,
-        bounce: false,
+        bounce: true,
         value: context().value,
         body: beginCell()
         .storeAddress(context().sender)
