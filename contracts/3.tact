@@ -68,15 +68,33 @@ contract Task3 with Deployable {
 
   receive(msg: TokenNotification) {
     require((context().sender == self.jettonAddressA) || (context().sender == self.jettonAddressB), "wrong jetton");
-    if (context().sender == self.jettonAddressA) {  // Jetton A
+    if (context().sender == self.jettonAddressA) {  // Jetton A receiving
       if (msg.from == self.owner) { // Came from owner?
         self.aAmount = self.aAmount + msg.amount;
-      } else {
+      } else { // Do swap
+        let amount: Int = (self.bAmount * self.decimal / self.aAmount) * msg.amount / self.decimal;
+        send(SendParameters{
+          to: self.jettonAddressB,
+          value: 0,
+          mode: SendRemainingValue,
+          body: TokenTransfer{queryId: 0, amount: amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: ton("0.01"), forwardPayload: emptySlice()}.toCell()
+        });
+        self.aAmount = self.aAmount + msg.amount;
+        self.bAmount = self.bAmount - amount;
       }
-    } else { // Jetton B
+    } else { // Jetton B receiving
       if (msg.from == self.owner) { // Came from owner?
         self.bAmount = self.bAmount + msg.amount;
-      } else {
+      } else { // Do swap
+        let amount: Int = (self.aAmount * self.decimal / self.bAmount) * msg.amount / self.decimal;
+        send(SendParameters{
+          to: self.jettonAddressA,
+          value: 0,
+          mode: SendRemainingValue,
+          body: TokenTransfer{queryId: 0, amount: amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: ton("0.01"), forwardPayload: emptySlice()}.toCell()
+        });
+        self.bAmount = self.bAmount + msg.amount;
+        self.aAmount = self.aAmount - amount;
       }
     }
   }
