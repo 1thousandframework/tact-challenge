@@ -101,20 +101,20 @@ contract Task3 with Deployable {
   } 
   
   get fun price(jetton: Address): Int { 
+    require((jetton == self.jettonAddressA) || (jetton == self.jettonAddressB), "wrong jetton address");
     if (jetton == self.jettonAddressA) {
       return self.bAmount * self.decimal / self.aAmount;
-    } else if (jetton == self.jettonAddressB) {
+    } else {
       return self.aAmount * self.decimal / self.bAmount;
     }
-    return 0;
   }
   
   get fun balance(jetton: Address): Int { 
+    require((jetton == self.jettonAddressA) || (jetton == self.jettonAddressB), "wrong jetton address");
     if (jetton == self.jettonAddressA) {
       return self.aAmount;
-    } else if (jetton == self.jettonAddressB) {
+    } else {
       return self.bAmount;
     }
-    return 0;
   }
 }
