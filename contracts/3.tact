@@ -66,6 +66,7 @@ contract Task3 with Deployable {
     self.decimal = 1000000000;
   }
 
+
   receive(msg: TokenNotification) {
     require((context().sender == self.jettonAddressA) || (context().sender == self.jettonAddressB), "wrong jetton");
     if (context().sender == self.jettonAddressA) {  // Jetton A
