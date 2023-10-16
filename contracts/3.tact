@@ -67,8 +67,20 @@ contract Task3 with Deployable {
   }
 
   receive(msg: TokenNotification) {
-    require(context().sender == self.owner, "access forbidden");
+    require((context().sender == self.jettonAddressA) || (context().sender == self.jettonAddressB), "wrong jetton");
+    if (context().sender == self.jettonAddressA) {
+      if (msg.from == self.owner) {
+        self.aAmount = self.aAmount + msg.amount;
+      } else {
 
+      }
+    } else if (context().sender == self.jettonAddressB) {
+      if (msg.from == self.owner) {
+        self.bAmount = self.bAmount + msg.amount;
+      } else {
+
+      }
+    }
   } 
   
   get fun price(jetton: Address): Int { 
@@ -78,6 +90,7 @@ contract Task3 with Deployable {
     } else if (jetton == self.jettonAddressB) {
        return self.aAmount / self.bAmount * self.decimal;
     }
+    return 0;
   }
   
   get fun balance(jetton: Address): Int { 
@@ -87,5 +100,6 @@ contract Task3 with Deployable {
     } else if (jetton == self.jettonAddressB) {
        return self.bAmount;
     }
+    return 0;
   }
 }
