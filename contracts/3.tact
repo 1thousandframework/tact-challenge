@@ -50,71 +50,100 @@ message(0xf8a7ea5) TokenTransfer {
      forwardPayload: Slice as remaining; // should be emptySlice()
 }
 
-contract Task3 with Deployable {
-  owner: Address;
-  aAmount: Int;
-  bAmount: Int;
-  jettonAddressA: Address;
-  jettonAddressB: Address;
-  decimal: Int;
+    contract Task3 with Deployable {
+    owner: Address;
+    aAmount: Int;
+    bAmount: Int;
+    jettonAddressA: Address;
+    jettonAddressB: Address;
+    decimal: Int;
 
-  init(admin: Address, newJettonAddressA: Address, newJettonAddressB: Address) {
-    self.owner = admin;
-    self.jettonAddressA = newJettonAddressA;
-    self.jettonAddressB = newJettonAddressB;
-    self.aAmount = 0;
-    self.bAmount = 0;
-    self.decimal = 1000000000;
-  }
+    init(admin: Address, newJettonAddressA: Address, newJettonAddressB: Address) {
+        self.owner = admin;
+        self.jettonAddressA = newJettonAddressA;
+        self.jettonAddressB = newJettonAddressB;
+        self.aAmount = 0;
+        self.bAmount = 0;
+        self.decimal = 1000000000;    
+    }
 
-  receive(msg: TokenNotification) {
-    // require((context().sender == self.jettonAddressA) || (context().sender == self.jettonAddressB), "wrong jetton");
-    // if (context().sender == self.jettonAddressA) {  // Jetton A receiving
-    //   if (msg.from == self.owner) { // Came from owner?
-    //     self.aAmount = self.aAmount + msg.amount;
-    //   } else { // Do swap
-    //     let amount: Int = (self.bAmount * self.decimal / self.aAmount) * msg.amount / self.decimal;
-    //     send(SendParameters{
-    //       to: self.jettonAddressB,
-    //       value: 0,
-    //       mode: SendRemainingValue,
-    //       body: TokenTransfer{queryId: 0, amount: amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: ton("0.01"), forwardPayload: emptySlice()}.toCell()
-    //     });
-    //     self.aAmount = self.aAmount + msg.amount;
-    //     self.bAmount = self.bAmount - amount;
-    //   }
-    // } else { // Jetton B receiving
-    //   if (msg.from == self.owner) { // Came from owner?
-    //     self.bAmount = self.bAmount + msg.amount;
-    //   } else { // Do swap
-    //     let amount: Int = (self.aAmount * self.decimal / self.bAmount) * msg.amount / self.decimal;
-    //     send(SendParameters{
-    //       to: self.jettonAddressA,
-    //       value: 0,
-    //       mode: SendRemainingValue,
-    //       body: TokenTransfer{queryId: 0, amount: amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: ton("0.01"), forwardPayload: emptySlice()}.toCell()
-    //     });
-    //     self.bAmount = self.bAmount + msg.amount;
-    //     self.aAmount = self.aAmount - amount;
-    //   }
-    // }
-  } 
-  
-  get fun price(jetton: Address): Int { 
-    require((jetton == self.jettonAddressA) || (jetton == self.jettonAddressB), "wrong jetton address");
-    if (jetton == self.jettonAddressA) {
-      return self.bAmount * self.decimal / self.aAmount;
-    } else {
-      return self.aAmount * self.decimal / self.bAmount;
+    receive(msg: TokenNotification) {
+        require((sender() == self.jettonAddressA) || (sender() == self.jettonAddressB), "wrong jetton");
+
+        if (msg.from == self.owner) { // Is Admin?
+            if (sender() == self.jettonAddressA) {
+                self.aAmount = self.aAmount + msg.amount;
+            } else {
+                self.bAmount = self.bAmount + msg.amount;
+            }
+        } else { // Handle swap
+            let amountToSwap: Int = 0;
+            let enough: Bool = false; 
+            let addrToSend: Address = self.jettonAddressA;
+            if (sender() == self.jettonAddressA) {
+                amountToSwap = (self.bAmount * self.decimal / self.aAmount) * msg.amount / self.decimal;
+                enough = amountToSwap <= self.bAmount;
+                addrToSend = self.jettonAddressB;
+            } else {
+                amountToSwap = (self.aAmount * self.decimal / self.bAmount) * msg.amount / self.decimal;
+                enough = amountToSwap <= self.aAmount;
+            }
+            if (enough) { // Do the swap
+                if (sender() == self.jettonAddressA) {
+                    self.aAmount = self.aAmount + msg.amount;
+                    self.bAmount = self.bAmount - amountToSwap;
+                } else {
+                    self.aAmount = self.aAmount - amountToSwap;
+                    self.bAmount = self.bAmount + msg.amount;
+                }
+                send(SendParameters{
+                    to: addrToSend,
+                    value: 0,
+                    mode: SendRemainingValue,
+                    body: TokenTransfer{
+                        queryId: 0,
+                        amount: amountToSwap,
+                        destination: msg.from,
+                        responseDestination: myAddress(),
+                        customPayload: null,
+                        forwardTonAmount: ton("0.01"),
+                        forwardPayload: emptySlice()
+                    }.toCell()
+                });
+            } else { // Refund
+                send(SendParameters{
+                    to: sender(),
+                    value: 0,
+                    mode: SendRemainingValue,
+                    body: TokenTransfer{
+                        queryId: 0,
+                        amount: msg.amount,
+                        destination: msg.from,
+                        responseDestination: myAddress(),
+                        customPayload: null,
+                        forwardTonAmount: ton("0.01"),
+                        forwardPayload: emptySlice()
+                    }.toCell()
+                });
+            }
+        }
+    } 
+
+    get fun price(jetton: Address): Int { 
+        require((jetton == self.jettonAddressA) || (jetton == self.jettonAddressB), "wrong jetton address");
+        if (jetton == self.jettonAddressA) {
+            return self.bAmount * self.decimal / self.aAmount;
+        } else {
+            return self.aAmount * self.decimal / self.bAmount;
+        }
     }
-  }
-  
-  get fun balance(jetton: Address): Int { 
-    require((jetton == self.jettonAddressA) || (jetton == self.jettonAddressB), "wrong jetton address");
-    if (jetton == self.jettonAddressA) {
-      return self.aAmount;
-    } else {
-      return self.bAmount;
+
+    get fun balance(jetton: Address): Int { 
+        require((jetton == self.jettonAddressA) || (jetton == self.jettonAddressB), "wrong jetton address");
+        if (jetton == self.jettonAddressA) {
+            return self.aAmount;
+        } else {
+            return self.bAmount;
+        }
     }
-  }
 }
