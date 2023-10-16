@@ -68,14 +68,14 @@ contract Task3 with Deployable {
 
   receive(msg: TokenNotification) {
     require(context().sender == self.owner, "access forbidden");
-    
+
   } 
   
   get fun price(jetton: Address): Int { 
     require((jetton == self.jettonAddressA) || (jetton == self.jettonAddressB), "wrong jetton address");
     if (jetton == self.jettonAddressA) {
        return self.aAmount / self.bAmount * self.decimal;
-    } else if (jetton == self.AddressB) {
+    } else if (jetton == self.jettonAddressB) {
        return self.aAmount / self.bAmount * self.decimal;
     }
   }
@@ -84,7 +84,7 @@ contract Task3 with Deployable {
     require((jetton == self.jettonAddressA) || (jetton == self.jettonAddressB), "wrong jetton address");
     if (jetton == self.jettonAddressA) {
        return self.aAmount;
-    } else if (jetton == self.AddressB) {
+    } else if (jetton == self.jettonAddressB) {
        return self.bAmount;
     }
   }
