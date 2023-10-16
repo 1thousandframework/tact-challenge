@@ -28,18 +28,18 @@ contract Task2 with Deployable {
   receive(msg: Refund) {
     require(context().sender == self.admin, "access forbidden");
     send(SendParameters{
-        to: msg.sender,
-        value: 0,
-        mode: SendRemainingValue
+      to: msg.sender,
+      value: 0,
+      mode: SendRemainingValue
     });
   }
 
   receive(msg: Slice) {
     send(SendParameters{
-        to: self.admin,
-        value: 0,
-        mode: SendRemainingValue,
-        body: beginCell().storeAddress(context().sender).storeRef(beginCell().storeSlice(msg).endCell()).endCell()
+      to: self.admin,
+      value: 0,
+      mode: SendRemainingValue,
+      body: beginCell().storeAddress(context().sender).storeRef(beginCell().storeSlice(msg).endCell()).endCell()
     });
   }
 }
