@@ -66,7 +66,6 @@ contract Task3 with Deployable {
     self.decimal = 1000000000;
   }
 
-
   receive(msg: TokenNotification) {
     require((context().sender == self.jettonAddressA) || (context().sender == self.jettonAddressB), "wrong jetton");
     if (context().sender == self.jettonAddressA) {  // Jetton A
@@ -83,20 +82,20 @@ contract Task3 with Deployable {
   }
   
   get fun price(jetton: Address): Int { 
-    require((jetton == self.jettonAddressA) || (jetton == self.jettonAddressB), "wrong jetton address");
     if (jetton == self.jettonAddressA) {
        return self.bAmount * self.decimal / self.aAmount;
-    } else {
+    } else if (jetton == self.jettonAddressB) {
        return self.aAmount * self.decimal / self.bAmount;
     }
+    return 0;
   }
   
   get fun balance(jetton: Address): Int { 
-    require((jetton == self.jettonAddressA) || (jetton == self.jettonAddressB), "wrong jetton address");
     if (jetton == self.jettonAddressA) {
        return self.aAmount;
-    } else {
+    } else if (jetton == self.jettonAddressB) {
        return self.bAmount;
     }
+    return 0;
   }
 }
