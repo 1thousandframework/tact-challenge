@@ -94,8 +94,8 @@ contract Task4 with Deployable {
                 self.lockedNFT = null;
                 send(SendParameters{
                     to: msg.nftAddress,
-                    value: myBalance(),
-                    mode: 0,
+                    value: 0,
+                    mode: SendRemainingBalance,
                     body: Transfer{
                         queryId: 0,
                         newOwner: sender(),
