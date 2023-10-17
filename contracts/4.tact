@@ -94,6 +94,10 @@ contract Task4 with Deployable {
                 body: "NFT is still locked".asComment()
             });
         } else {
+            let nftAddr: Address = self.lockedNFT!!;
+            self.lockedNFT = null;
+            self.lockedUntil = 0;
+            self.NFTowner = null;
             send(SendParameters{
                 to: self.lockedNFT!!,
                 value: 0,
@@ -107,9 +111,6 @@ contract Task4 with Deployable {
                     forwardPayload: emptySlice()
                 }.toCell()
             });
-            self.lockedNFT = null;
-            self.lockedUntil = 0;
-            self.NFTowner = null;
         }
     }
 
