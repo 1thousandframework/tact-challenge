@@ -89,10 +89,13 @@ contract Task4 with Deployable {
             self.reply("NFT is still locked".asComment());
         } else {
             if (msg.nftAddress == self.lockedNFT) {
+                self.NFTowner = null;
+                self.lockedUntil = 0;
+                self.lockedNFT = null;
                 send(SendParameters{
                     to: msg.nftAddress,
-                    value: 0,
-                    mode: SendRemainingValue,
+                    value: myBalance(),
+                    mode: 0,
                     body: Transfer{
                         queryId: 0,
                         newOwner: sender(),
@@ -102,20 +105,16 @@ contract Task4 with Deployable {
                         forwardPayload: emptySlice()
                     }.toCell()
                 });
-                self.lockedNFT = null;
-                self.NFTowner = null;
-                self.lockedUntil = 0;
             }
         }
     }
 
     get fun time(): Int {
-        // if (self.lockedUntil == 0) {
-        //     return self.lockedUntil;
-        // } else {
-        //     return self.lockedUntil - now();
-        // }
-        return self.lockedUntil - now();
+        let timeLeft: Int = self.lockedUntil - now();
+        if (timeLeft < 0) {
+            return 0;
+        }
+        return timeLeft;
     }
 
     get fun nft(): Address? {
