@@ -84,29 +84,29 @@ contract Task4 with Deployable {
         // if (self.lockedNFT == null) {
         //     return;
         // }
-        require(sender() == self.NFTowner!!, "Invalid sender");
-        if (now() < self.lockedUntil) { // Is NFT still locked?
-            self.reply("NFT is still locked".asComment());
-        } else {
-            if (msg.nftAddress == self.lockedNFT) {
-                self.NFTowner = null;
-                self.lockedUntil = 0;
-                self.lockedNFT = null;
-                send(SendParameters{
-                    to: msg.nftAddress,
-                    value: 0,
-                    mode: SendRemainingBalance,
-                    body: Transfer{
-                        queryId: 0,
-                        newOwner: sender(),
-                        responseDestination: myAddress(),
-                        customPayload: null,
-                        forwardAmount: ton("0.01"),
-                        forwardPayload: emptySlice()
-                    }.toCell()
-                });
-            }
-        }
+        // require(sender() == self.NFTowner!!, "Invalid sender");
+        // if (now() < self.lockedUntil) { // Is NFT still locked?
+        //     self.reply("NFT is still locked".asComment());
+        // } else {
+        //     if (msg.nftAddress == self.lockedNFT) {
+        //         self.NFTowner = null;
+        //         self.lockedUntil = 0;
+        //         self.lockedNFT = null;
+        //         send(SendParameters{
+        //             to: msg.nftAddress,
+        //             value: 0,
+        //             mode: SendRemainingBalance,
+        //             body: Transfer{
+        //                 queryId: 0,
+        //                 newOwner: sender(),
+        //                 responseDestination: myAddress(),
+        //                 customPayload: null,
+        //                 forwardAmount: ton("0.01"),
+        //                 forwardPayload: emptySlice()
+        //             }.toCell()
+        //         });
+        //     }
+        // }
     }
 
     get fun time(): Int {
