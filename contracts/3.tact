@@ -89,7 +89,7 @@ message(0xf8a7ea5) TokenTransfer {
                 enough = amountToSwap <= self.aAmount;
             }
             if (enough) { // Do the swap
-                if (sender() == self.jettonAddressA) {
+                if (sender() == self.jettonAddressA) { // Update amounts after the swap
                     self.aAmount = self.aAmount + msg.amount;
                     self.bAmount = self.bAmount - amountToSwap;
                 } else {
