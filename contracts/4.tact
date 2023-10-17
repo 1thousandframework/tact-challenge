@@ -82,11 +82,11 @@ contract Task4 with Deployable {
   }
 
     receive(msg: NftWithdrawal) {
-        if (self.lockedNFT == null) {
-            return;
-        }
+        // if (self.lockedNFT == null) {
+        //     return;
+        // }
         require(sender() == self.NFTowner!!, "Invalid sender");
-        if (now() <= self.lockedUntil) { // Is NFT still locked?
+        if (now() < self.lockedUntil) { // Is NFT still locked?
             send(SendParameters{
                 to: sender(),
                 value: 0,
@@ -115,11 +115,12 @@ contract Task4 with Deployable {
     }
 
     get fun time(): Int {
-        if (self.lockedUntil == 0) {
-            return self.lockedUntil;
-        } else {
-            return self.lockedUntil - now(); 
-        }
+        // if (self.lockedUntil == 0) {
+        //     return self.lockedUntil;
+        // } else {
+        //     return self.lockedUntil - now();
+        // }
+        return self.lockedUntil - now();
     }
 
     get fun nft(): Address? {
