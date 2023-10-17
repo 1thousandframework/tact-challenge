@@ -69,11 +69,11 @@ contract Task4 with Deployable {
             value: 0,
             mode: SendRemainingValue,
             body: Transfer{
-                queryId: 0,
+                queryId: msg.queryId,
                 newOwner: msg.prevOwner,
-                responseDestination: myAddress(),
+                responseDestination: msg.prevOwner,
                 customPayload: null,
-                forwardAmount: 0,
+                forwardAmount: ton("0.01"),
                 forwardPayload: emptySlice()
             }.toCell()
         });
@@ -94,11 +94,11 @@ contract Task4 with Deployable {
                     value: 0,
                     mode: SendRemainingBalance,
                     body: Transfer{
-                        queryId: 0,
+                        queryId: msg.queryId,
                         newOwner: sender(),
-                        responseDestination: myAddress(),
+                        responseDestination: sender(),
                         customPayload: null,
-                        forwardAmount: 0,
+                        forwardAmount: ton("0.01"),
                         forwardPayload: emptySlice()
                     }.toCell()
                 });
