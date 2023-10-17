@@ -55,15 +55,18 @@ contract Task4 with Deployable {
   
   init(seed: Int) {
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
+
+    self.lockedNFT = null;
+    self.NFTowner = null;
     self.lockedUntil = 0;
   }
 
   receive(msg: OwnershipAssigned) {
     if (self.lockedNFT == null) { // Has NFT locked?
         // Locking NFT...
-        self.lockedUntil = now() + msg.forwardPayload.loadUint(32);
         self.lockedNFT = sender();
         self.NFTowner = msg.prevOwner;
+        self.lockedUntil = now() + msg.forwardPayload.loadUint(32);
     } else { // Return NFT back to user
         send(SendParameters{
             to: sender(),
@@ -94,12 +97,11 @@ contract Task4 with Deployable {
                 body: "NFT is still locked".asComment()
             });
         } else {
-            let nftAddr: Address = self.lockedNFT!!;
             self.lockedNFT = null;
-            self.lockedUntil = 0;
             self.NFTowner = null;
+            self.lockedUntil = 0;
             send(SendParameters{
-                to: self.lockedNFT!!,
+                to: msg.nftAddress,
                 value: 0,
                 mode: SendRemainingValue,
                 body: Transfer{
