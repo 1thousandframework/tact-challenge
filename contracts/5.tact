@@ -123,7 +123,7 @@ contract Task5 with Deployable {
         require(sender() == self.owner, "Insufficient privelegies");
         send(SendParameters{
             to: sender(),
-            value: myBalance() - context().readForwardFee() - ton("0.1"),
+            value: myBalance() - ton("0.1"),
             mode: 0,
             body: AdminFetchProfit{
                 queryId: msg.queryId
