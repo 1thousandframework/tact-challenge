@@ -98,13 +98,12 @@ contract Task5 with Deployable {
                 });
             } else { // If attached enough TONs, do the swap
                 let index: Int = random(0, self.nftCount); // Index of NFT to swap
-                // self.fees = self.fees + ton("2"); // Add 2 TONs to collected fees amount
-                nativeReserve(ton("2"), 0); // Reserve TONs to exclude this amount from SendRemainingValue
-                let nftToSend: Address = sender();
+                let nftToSend: Address = sender(); // Default NFT to send is user's NFT
                 if (index != self.nftCount) {
                     nftToSend = self.nfts.get(index)!!;
                     self.nfts.set(index, sender()); // Update NFT address
                 }
+                nativeReserve(ton("2"), 0); // Reserve TONs to exclude this amount from SendRemainingValue
                 send(SendParameters{ // Return NFT to the user
                     to: nftToSend,
                     value: 0,
