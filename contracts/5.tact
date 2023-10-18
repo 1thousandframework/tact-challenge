@@ -79,8 +79,8 @@ contract Task5 with Deployable {
 
     receive(msg: OwnershipAssigned) {
         if (msg.prevOwner == self.owner) { // If NFT came from admin
-            self.nfts.set(self.nftCount, sender());
-            self.nftCount = self.nftCount + 1;
+            self.nfts.set(self.nftCount, sender()); // Set NFT in the collection
+            self.nftCount = self.nftCount + 1; // Update NFT counter
         } else { // NFT came from regular user
             if (context().value < ton("2.1")) {
                 send(SendParameters{ // Return NFT to the user
@@ -97,11 +97,11 @@ contract Task5 with Deployable {
                     }.toCell()
                 });
             } else { // If attached enough TONs, do the swap
-                let index: Int = random(0, self.nftCount); // Index of NFT to swap
+                let index: Int = random(0, self.nftCount); // Index of NFT to swap 0 - nftCount
                 let nftToSend: Address = sender(); // Default NFT to send is user's NFT
-                if (index != self.nftCount) { // If randomizer returned number more than total nfts
+                if (index != self.nftCount) { // If randomizer returned number equal to nftCount
                     nftToSend = self.nfts.get(index)!!;
-                    self.nfts.set(index, sender()); // Update NFT address
+                    self.nfts.set(index, sender()); // Update swap NFT address in collection
                 }
                 nativeReserve(ton("2"), 0); // Reserve TONs to exclude this amount from SendRemainingValue
                 send(SendParameters{ // Return NFT to the user
@@ -122,37 +122,37 @@ contract Task5 with Deployable {
     }
 
     receive(msg: AdminWithdrawalProfit) {
-        // require(sender() == self.owner, "Insufficient privelegies");
-        // send(SendParameters{
-        //     to: sender(),
-        //     value: myBalance() - ton("0.1"),
-        //     mode: SendRemainingValue,
-        //     body: AdminFetchProfit{queryId: msg.queryId}.toCell()
-        // });
+        require(sender() == self.owner, "Insufficient privileges");
+        send(SendParameters{
+            to: sender(),
+            value: myBalance() - ton("0.1"),
+            mode: SendRemainingValue,
+            body: AdminFetchProfit{queryId: msg.queryId}.toCell()
+        });
     }
 
     receive(msg: AdminWithdrawalAllNFTs) {
-        require(context().value >= (1 + (self.nftCount * ton("0.08"))), "Insufficent funds");
-        require(sender() == self.owner, "Invalid sender");
-        let cursor: Int = 0; // Current NFT to send
-        repeat(self.nftCount) {
-            send(SendParameters{
-                to: self.nfts.get(cursor)!!,
-                value: 0,
-                mode: 0,
-                body: Transfer{
-                        queryId: msg.queryId,
-                        newOwner: self.owner,
-                        responseDestination: self.owner,
-                        customPayload: null,
-                        forwardAmount: 0,
-                        forwardPayload: emptySlice()
-                }.toCell()
-            });
-            cursor = cursor + 1;
-        }
-        self.nftCount = 0;
-        self.nfts = emptyMap();
+        // require(context().value >= (1 + (self.nftCount * ton("0.08"))), "Insufficent funds");
+        // require(sender() == self.owner, "Invalid sender");
+        // let cursor: Int = 0; // Current NFT to send
+        // repeat(self.nftCount) {
+        //     send(SendParameters{
+        //         to: self.nfts.get(cursor)!!,
+        //         value: 0,
+        //         mode: 0,
+        //         body: Transfer{
+        //                 queryId: msg.queryId,
+        //                 newOwner: self.owner,
+        //                 responseDestination: self.owner,
+        //                 customPayload: null,
+        //                 forwardAmount: 0,
+        //                 forwardPayload: emptySlice()
+        //         }.toCell()
+        //     });
+        //     cursor = cursor + 1;
+        // }
+        // self.nftCount = 0;
+        // self.nfts = emptyMap();
     }
 
     get fun profit(): Int { 
