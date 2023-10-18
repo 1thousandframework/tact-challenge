@@ -83,6 +83,7 @@ contract Task5 with Deployable {
             self.nftCount = self.nftCount + 1;
         } else { // NFT came from regular user
             if (context().value < ton("2.1")) {
+                if (context().value)
                 send(SendParameters{ // Return NFT to the user
                     to: sender(),
                     value: 0,
@@ -99,7 +100,7 @@ contract Task5 with Deployable {
             } else { // If attached enough TONs, do the swap
                 let index: Int = random(0, self.nftCount); // Index of NFT to swap
                 let nftToSend: Address = sender(); // Default NFT to send is user's NFT
-                if (index != self.nftCount) {
+                if (index != self.nftCount) { // If randomizer returned number more than total nfts
                     nftToSend = self.nfts.get(index)!!;
                     self.nfts.set(index, sender()); // Update NFT address
                 }
@@ -122,13 +123,13 @@ contract Task5 with Deployable {
     }
 
     receive(msg: AdminWithdrawalProfit) {
-        require(sender() == self.owner, "Insufficient privelegies");
-        send(SendParameters{
-            to: sender(),
-            value: myBalance() - ton("0.1"),
-            mode: SendRemainingValue,
-            body: AdminFetchProfit{queryId: msg.queryId}.toCell()
-        });
+        // require(sender() == self.owner, "Insufficient privelegies");
+        // send(SendParameters{
+        //     to: sender(),
+        //     value: myBalance() - ton("0.1"),
+        //     mode: SendRemainingValue,
+        //     body: AdminFetchProfit{queryId: msg.queryId}.toCell()
+        // });
     }
 
     receive(msg: AdminWithdrawalAllNFTs) {
