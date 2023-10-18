@@ -65,26 +65,101 @@ message(0x5fcc3d14) Transfer {
 }
 
 contract Task5 with Deployable {
-  seed: Int as uint128;
-  owner: Address;
+    seed: Int as uint128;
+    owner: Address;
+
+    nfts: map<Int as uint16, Address>;
+    nftCount: Int = 0;
+    fees: Int = 0;
   
-  init(seed: Int, owner: Address) {
-    self.owner = owner;
-    self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
-  }
+    init(seed: Int, owner: Address) {
+        self.owner = owner;
+        self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
+    }
 
-  receive(msg: OwnershipAssigned) {
-  }
+    receive(msg: OwnershipAssigned) {
+        if (msg.prevOwner == self.owner) { // If NFT came from admin
+            self.nfts.set(self.nftCount, sender());
+            self.nftCount = self.nftCount + 1;
+        } else { // NFT came from regular user
+            if (context().value < ton("2.1")) {
+                send(SendParameters{ // Return NFT to the user
+                    to: sender(),
+                    value: 0,
+                    mode: SendRemainingValue + SendIgnoreErrors,
+                    body: Transfer{
+                        queryId: msg.queryId,
+                        newOwner: msg.prevOwner,
+                        responseDestination: msg.prevOwner,
+                        customPayload: null,
+                        forwardAmount: 0,
+                        forwardPayload: emptySlice()
+                    }.toCell()
+                });
+            } else { // If attached enough TONs, do the swap
+                let index: Int = random(0, self.nftCount - 1); // Index of NFT to swap
+                self.fees = self.fees + ton("2"); // Add 2 TONs to collected fees amount
+                nativeReserve(ton("2"), 0); // Reserve TONs to exclude this amount from SendRemainingValue
+                let nftAddrToSend: Address = self.nfts.get(index)!!;
+                self.nfts.set(index, sender()); // Update NFT address
+                send(SendParameters{ // Return NFT to the user
+                    to: nftAddrToSend,
+                    value: 0,
+                    mode: SendRemainingValue + SendIgnoreErrors,
+                    body: Transfer{
+                        queryId: msg.queryId,
+                        newOwner: msg.prevOwner,
+                        responseDestination: msg.prevOwner,
+                        customPayload: null,
+                        forwardAmount: 0,
+                        forwardPayload: emptySlice()
+                    }.toCell()
+                });
+            }
+        }
+    }
 
-  receive(msg: AdminWithdrawalProfit) {
-  }
+    receive(msg: AdminWithdrawalProfit) {
+        require(sender() == self.owner, "Insufficient privelegies");
+        send(SendParameters{
+            to: sender(),
+            value: myBalance() - context().readForwardFee() - ton("0.1"),
+            mode: 0,
+            body: AdminFetchProfit{
+                queryId: msg.queryId
+            }.toCell()
+        });
+    }
 
-  receive(msg: AdminWithdrawalAllNFTs) {
-  }
+    receive(msg: AdminWithdrawalAllNFTs) {
+        require(context().value >= (1 + (self.nftCount * ton("0.08"))), "Insufficent funds");
+        require(sender() == self.owner, "Invalid sender");
+        let cursor: Int = 0;
+        repeat(self.nftCount) {
+            send(SendParameters{
+                to: self.nfts.get(cursor)!!,
+                value: 0,
+                mode: 0,
+                body: Transfer{
+                        queryId: msg.queryId,
+                        newOwner: self.owner,
+                        responseDestination: self.owner,
+                        customPayload: null,
+                        forwardAmount: 0,
+                        forwardPayload: emptySlice()
+                }.toCell()
+            });
+            cursor = cursor + 1;
+        }
+        self.nftCount = 0;
+        self.nfts = emptyMap();
+    }
 
-  get fun profit(): Int { 
-  }
+    get fun profit(): Int { 
+        return self.fees - ton("0.1");
+    }
   
-  get fun nfts(): map<Int as uint16, Address> { 
-  }
+    get fun nfts(): map<Int as uint16, Address> { 
+        return self.nfts;
+    }
 }
