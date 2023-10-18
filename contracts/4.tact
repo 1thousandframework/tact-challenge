@@ -68,6 +68,7 @@ contract Task4 with Deployable {
             to: sender(),
             value: 0,
             mode: SendRemainingValue,
+            bounce: true,
             body: Transfer{
                 queryId: msg.queryId,
                 newOwner: msg.prevOwner,
@@ -91,6 +92,7 @@ contract Task4 with Deployable {
                 send(SendParameters{
                     to: msg.nftAddress,
                     value: 0,
+                    bounce: true,
                     mode: SendRemainingBalance,
                     body: Transfer{
                         queryId: msg.queryId,
