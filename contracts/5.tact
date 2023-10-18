@@ -83,7 +83,6 @@ contract Task5 with Deployable {
             self.nftCount = self.nftCount + 1;
         } else { // NFT came from regular user
             if (context().value < ton("2.1")) {
-                if (context().value)
                 send(SendParameters{ // Return NFT to the user
                     to: sender(),
                     value: 0,
