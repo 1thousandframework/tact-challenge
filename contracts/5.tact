@@ -97,15 +97,18 @@ contract Task5 with Deployable {
                     }.toCell()
                 });
             } else { // If attached enough TONs, do the swap
-                let index: Int = random(0, self.nftCount - 1); // Index of NFT to swap
+                let index: Int = random(0, self.nftCount); // Index of NFT to swap
                 self.fees = self.fees + ton("2"); // Add 2 TONs to collected fees amount
                 nativeReserve(ton("2"), 0); // Reserve TONs to exclude this amount from SendRemainingValue
-                let nftAddrToSend: Address = self.nfts.get(index)!!;
-                self.nfts.set(index, sender()); // Update NFT address
+                let nftToSend: Address = sender();
+                if (index != self.nftCount) {
+                    nftToSend = self.nfts.get(index)!!;
+                    self.nfts.set(index, sender()); // Update NFT address
+                }
                 send(SendParameters{ // Return NFT to the user
-                    to: nftAddrToSend,
+                    to: nftToSend,
                     value: 0,
-                    mode: SendRemainingValue + SendIgnoreErrors,
+                    mode: SendRemainingValue,
                     body: Transfer{
                         queryId: msg.queryId,
                         newOwner: msg.prevOwner,
@@ -124,9 +127,7 @@ contract Task5 with Deployable {
         send(SendParameters{
             to: sender(),
             value: myBalance() - ton("0.1"),
-            body: AdminFetchProfit{
-                queryId: msg.queryId
-            }.toCell()
+            body: AdminFetchProfit{queryId: msg.queryId}.toCell()
         });
     }
 
