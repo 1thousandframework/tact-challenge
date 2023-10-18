@@ -68,7 +68,6 @@ contract Task4 with Deployable {
             to: sender(),
             value: 0,
             mode: SendRemainingValue,
-            bounce: false,
             body: Transfer{
                 queryId: msg.queryId,
                 newOwner: msg.prevOwner,
@@ -86,13 +85,14 @@ contract Task4 with Deployable {
         if (now() <= self.lockedUntil) { // Is NFT still locked?
             self.reply("NFT is still locked".asComment());
         } else {
-            if (msg.nftAddress == self.lockedNFT) { // Unlock NFT and send it to the owner with all the rest balance
+            // if (msg.nftAddress == self.lockedNFT) { // Unlock NFT and send it to the owner with all the rest balance
+
+            // }
                 self.NFTowner = null;
                 self.lockedNFT = null;
                 send(SendParameters{
                     to: msg.nftAddress,
                     value: 0,
-                    bounce: false,
                     mode: SendRemainingBalance,
                     body: Transfer{
                         queryId: msg.queryId,
@@ -103,7 +103,6 @@ contract Task4 with Deployable {
                         forwardPayload: emptySlice()
                     }.toCell()
                 });
-            }
         }
     }
 
