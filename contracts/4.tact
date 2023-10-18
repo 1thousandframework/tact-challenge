@@ -73,7 +73,7 @@ contract Task4 with Deployable {
                 newOwner: msg.prevOwner,
                 responseDestination: msg.prevOwner,
                 customPayload: null,
-                forwardAmount: ton("0.01"),
+                forwardAmount:0,
                 forwardPayload: emptySlice()
             }.toCell()
         });
@@ -87,7 +87,6 @@ contract Task4 with Deployable {
         } else {
             if (msg.nftAddress == self.lockedNFT) { // Unlock NFT and send it to the owner with all the rest balance
                 self.NFTowner = null;
-                self.lockedUntil = 0;
                 self.lockedNFT = null;
                 send(SendParameters{
                     to: msg.nftAddress,
@@ -98,7 +97,7 @@ contract Task4 with Deployable {
                         newOwner: sender(),
                         responseDestination: sender(),
                         customPayload: null,
-                        forwardAmount: ton("0.01"),
+                        forwardAmount: 0,
                         forwardPayload: emptySlice()
                     }.toCell()
                 });
