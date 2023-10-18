@@ -73,7 +73,7 @@ contract Task4 with Deployable {
                 newOwner: msg.prevOwner,
                 responseDestination: msg.prevOwner,
                 customPayload: null,
-                forwardAmount:0,
+                forwardAmount: 0,
                 forwardPayload: emptySlice()
             }.toCell()
         });
@@ -82,27 +82,25 @@ contract Task4 with Deployable {
 
     receive(msg: NftWithdrawal) {
         require(sender() == self.NFTowner, "Invalid sender");
-        if (now() <= self.lockedUntil) { // Is NFT still locked?
+        let test: Int = 999;
+        if (self.lockedUntil > now()) { // Is NFT still locked?
             self.reply("NFT is still locked".asComment());
         } else {
-            // if (msg.nftAddress == self.lockedNFT) { // Unlock NFT and send it to the owner with all the rest balance
-
-            // }
-                send(SendParameters{
-                    to: msg.nftAddress,
-                    value: 0,
-                    mode: SendRemainingBalance,
-                    body: Transfer{
-                        queryId: msg.queryId,
-                        newOwner: sender(),
-                        responseDestination: sender(),
-                        customPayload: null,
-                        forwardAmount: 0,
-                        forwardPayload: emptySlice()
-                    }.toCell()
-                });
-                self.NFTowner = null;
-                self.lockedNFT = null;
+            self.NFTowner = null;
+            self.lockedNFT = null;
+            send(SendParameters{
+                to: msg.nftAddress,
+                value: 0,
+                mode: SendRemainingBalance,
+                body: Transfer{
+                    queryId: msg.queryId,
+                    newOwner: sender(),
+                    responseDestination: sender(),
+                    customPayload: null,
+                    forwardAmount: 0,
+                    forwardPayload: emptySlice()
+                }.toCell()
+            });
         }
     }
 
