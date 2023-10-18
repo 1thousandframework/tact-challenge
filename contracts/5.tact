@@ -70,7 +70,7 @@ contract Task5 with Deployable {
 
     nfts: map<Int as uint16, Address>;
     nftCount: Int = 0;
-    fees: Int = 0;
+    // fees: Int = 0;
   
     init(seed: Int, owner: Address) {
         self.owner = owner;
@@ -98,7 +98,7 @@ contract Task5 with Deployable {
                 });
             } else { // If attached enough TONs, do the swap
                 let index: Int = random(0, self.nftCount); // Index of NFT to swap
-                self.fees = self.fees + ton("2"); // Add 2 TONs to collected fees amount
+                // self.fees = self.fees + ton("2"); // Add 2 TONs to collected fees amount
                 nativeReserve(ton("2"), 0); // Reserve TONs to exclude this amount from SendRemainingValue
                 let nftToSend: Address = sender();
                 if (index != self.nftCount) {
