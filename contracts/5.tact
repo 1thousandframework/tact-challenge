@@ -103,11 +103,11 @@ contract Task5 with Deployable {
                     nftToSend = self.nfts.get(index)!!;
                     self.nfts.set(index, sender()); // Update swap NFT address in collection
                 }
-                nativeReserve(ton("2"), 0); // Reserve TONs to exclude this amount from SendRemainingValue
+                // nativeReserve(ton("2"), 0); // Reserve TONs to exclude this amount from SendRemainingValue
                 send(SendParameters{ // Return NFT to the user
                     to: nftToSend,
-                    value: 0,
-                    mode: SendRemainingValue,
+                    value: context().value - context().readForwardFee() - ton("2"),
+                    mode: 0,
                     body: Transfer{
                         queryId: msg.queryId,
                         newOwner: msg.prevOwner,
@@ -141,12 +141,12 @@ contract Task5 with Deployable {
                 value: 0,
                 mode: 0,
                 body: Transfer{
-                        queryId: msg.queryId,
-                        newOwner: self.owner,
-                        responseDestination: self.owner,
-                        customPayload: null,
-                        forwardAmount: 0,
-                        forwardPayload: emptySlice()
+                    queryId: msg.queryId,
+                    newOwner: self.owner,
+                    responseDestination: self.owner,
+                    customPayload: null,
+                    forwardAmount: 0,
+                    forwardPayload: emptySlice()
                 }.toCell()
             });
             cursor = cursor + 1;
