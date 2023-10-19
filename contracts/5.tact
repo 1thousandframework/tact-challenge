@@ -146,15 +146,18 @@ contract Task5 with Deployable {
                     forwardPayload: emptySlice()
                 }.toCell()
             });
-            self.nfts.set(self.nftCount - 1, null);
+            // self.nfts.set(self.nftCount - 1, null);
             self.nftCount = self.nftCount - 1;
         }
         if (self.nftCount > 0) {
             send(SendParameters{
                 to: myAddress(),
-                value: 0,
+                value: ton("1") + (self.nftCount * ton("0.08")),
+                mode: SendPayGasSeparately,
                 body: AdminWithdrawalAllNFTs{queryId: msg.queryId}.toCell()
             });
+        } else {
+            self.nfts = emptyMap();
         }
     }
 
