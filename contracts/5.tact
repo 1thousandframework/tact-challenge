@@ -78,24 +78,8 @@ contract Task5 with Deployable {
 
     receive(msg: OwnershipAssigned) {
         if (msg.prevOwner == self.owner) { // If NFT came from admin
-            if (self.nftCount >= 100) {
-                send(SendParameters{ // Return NFT to the user
-                    to: sender(),
-                    value: 0,
-                    mode: SendRemainingValue,
-                    body: Transfer{
-                        queryId: msg.queryId,
-                        newOwner: msg.prevOwner,
-                        responseDestination: msg.prevOwner,
-                        customPayload: null,
-                        forwardAmount: 0,
-                        forwardPayload: emptySlice()
-                    }.toCell()
-                });
-            } else {
-                 self.nfts.set(self.nftCount, sender()); // Set NFT in the collection
-                self.nftCount = self.nftCount + 1; // Update NFT counter
-            }
+            self.nfts.set(self.nftCount, sender()); // Set NFT in the collection
+            self.nftCount = self.nftCount + 1; // Update NFT counter
         } else { // NFT came from regular user
             if (context().value < ton("2.1")) {
                 send(SendParameters{ // Return NFT to the user
@@ -154,6 +138,7 @@ contract Task5 with Deployable {
             send(SendParameters{
                 to: self.nfts.get(cursor)!!,
                 value: ton("0.08"),
+                mode: 0,
                 body: Transfer{
                     queryId: msg.queryId,
                     newOwner: self.owner,
