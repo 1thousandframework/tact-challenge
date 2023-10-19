@@ -160,6 +160,8 @@ contract Task5 with Deployable {
                 mode: SendRemainingBalance,
                 body: AdminWithdrawalAllNFTs{queryId: msg.queryId}.toCell()
             });
+        } else {
+            self.nfts = emptyMap();
         }
     }
 
