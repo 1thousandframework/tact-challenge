@@ -81,7 +81,7 @@ contract Task5 with Deployable {
             self.nfts.set(self.nftCount, sender()); // Set NFT in the collection
             self.nftCount = self.nftCount + 1; // Update NFT counter
         } else { // NFT came from regular user
-            if (context().value < ton("2.1") || self.nftCount == 0) {
+            if (context().value < ton("2.1")) {
                 send(SendParameters{ // Return NFT to the user
                     to: sender(),
                     value: 0,
@@ -138,13 +138,12 @@ contract Task5 with Deployable {
             send(SendParameters{
                 to: self.nfts.get(cursor)!!,
                 value: 0,
-                mode: 0,
                 body: Transfer{
                     queryId: msg.queryId,
                     newOwner: self.owner,
                     responseDestination: self.owner,
                     customPayload: null,
-                    forwardAmount: 0,
+                    forwardAmount: ton("0.06"),
                     forwardPayload: emptySlice()
                 }.toCell()
             });
