@@ -157,7 +157,7 @@ contract Task5 with Deployable {
             send(SendParameters{
                 to: myAddress(),
                 value: 0,
-                mode: SendPayGasSeparately,
+                mode: SendRemainingBalance,
                 body: AdminWithdrawalAllNFTs{queryId: msg.queryId}.toCell()
             });
         }
