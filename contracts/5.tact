@@ -159,6 +159,6 @@ contract Task5 with Deployable {
     }
   
     get fun nfts(): map<Int as uint16, Address> { 
-        return self.nfts;
+        // return self.nfts;
     }
 }
