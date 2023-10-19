@@ -131,6 +131,7 @@ contract Task5 with Deployable {
     }
 
     receive(msg: AdminWithdrawalAllNFTs) {
+        let a: Int = 999;
         if (sender() == self.owner) {
             require(context().value == (ton("1") + (self.nftCount * ton("0.08"))), "Insufficent funds");
         }
