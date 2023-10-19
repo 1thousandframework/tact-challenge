@@ -70,7 +70,6 @@ contract Task5 with Deployable {
 
     nfts: map<Int as uint16, Address>;
     nftCount: Int = 0;
-    // fees: Int = 0;
   
     init(seed: Int, owner: Address) {
         self.owner = owner;
@@ -82,7 +81,7 @@ contract Task5 with Deployable {
             self.nfts.set(self.nftCount, sender()); // Set NFT in the collection
             self.nftCount = self.nftCount + 1; // Update NFT counter
         } else { // NFT came from regular user
-            if (context().value < ton("2.1")) {
+            if (context().value < ton("2.1") || self.nftCount == 0) {
                 send(SendParameters{ // Return NFT to the user
                     to: sender(),
                     value: 0,
@@ -103,11 +102,11 @@ contract Task5 with Deployable {
                     nftToSend = self.nfts.get(index)!!;
                     self.nfts.set(index, sender()); // Update swap NFT address in collection
                 }
-                // nativeReserve(ton("2"), 0); // Reserve TONs to exclude this amount from SendRemainingValue
+                nativeReserve(ton("2"), 0); // Reserve TONs to exclude this amount from SendRemainingValue
                 send(SendParameters{ // Return NFT to the user
                     to: nftToSend,
-                    value: context().value - context().readForwardFee() - ton("2"),
-                    mode: 0,
+                    value: 0,
+                    mode: SendRemainingValue,
                     body: Transfer{
                         queryId: msg.queryId,
                         newOwner: msg.prevOwner,
