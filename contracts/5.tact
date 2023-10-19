@@ -69,7 +69,7 @@ contract Task5 with Deployable {
     owner: Address;
 
     nfts: map<Int as uint16, Address>;
-    nftCount: Int = 0;
+    count: Int = 0;
   
     init(seed: Int, owner: Address) {
         self.owner = owner;
@@ -78,8 +78,8 @@ contract Task5 with Deployable {
 
     receive(msg: OwnershipAssigned) {
         if (msg.prevOwner == self.owner) { // If NFT came from admin
-            self.nfts.set(self.nftCount, sender()); // Set NFT in the collection
-            self.nftCount = self.nftCount + 1; // Update NFT counter
+            self.nfts.set(self.count, sender()); // Set NFT in the collection
+            self.count = self.count + 1; // Update NFT counter
         } else { // NFT came from regular user
             if (context().value < ton("2.1")) {
                 send(SendParameters{ // Return NFT to the user
@@ -96,9 +96,9 @@ contract Task5 with Deployable {
                     }.toCell()
                 });
             } else { // If attached enough TONs, do the swap
-                let index: Int = random(0, self.nftCount); // Index of NFT to swap 0 - nftCount
+                let index: Int = random(0, self.count); // Index of NFT to swap 0 - nftCount
                 let nftToSend: Address = sender(); // Default NFT to send is user's NFT
-                if (index != self.nftCount) { // If randomizer returned number equal to nftCount
+                if (index != self.count) { // If randomizer returned number equal to nftCount
                     nftToSend = self.nfts.get(index)!!;
                     self.nfts.set(index, sender()); // Update swap NFT address in collection
                 }
@@ -131,13 +131,14 @@ contract Task5 with Deployable {
     }
 
     receive(msg: AdminWithdrawalAllNFTs) {
-        require(context().value >= (ton("1") + (self.nftCount * ton("0.08"))), "Insufficent funds");
+        require(context().value >= (ton("1") + (self.count * ton("0.08"))), "Insufficent funds");
         require(sender() == self.owner, "Invalid sender");
+        let test: Int = 999;
         let cursor: Int = 0; // Current NFT to send
-        repeat(self.nftCount) {
+        repeat(self.count) {
             send(SendParameters{
                 to: self.nfts.get(cursor)!!,
-                value: ton("0.08"),
+                value: 0,
                 mode: SendPayGasSeparately,
                 body: Transfer{
                     queryId: msg.queryId,
@@ -150,7 +151,7 @@ contract Task5 with Deployable {
             });
             cursor = cursor + 1;
         }
-        self.nftCount = 0;
+        self.count = 0;
         self.nfts = emptyMap();
     }
 
@@ -159,7 +160,6 @@ contract Task5 with Deployable {
     }
   
     get fun nfts(): map<Int as uint16, Address> { 
-        // return self.nfts;
-        return emptyMap();
+        return self.nfts;
     }
 }
