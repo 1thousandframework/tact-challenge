@@ -138,7 +138,7 @@ contract Task5 with Deployable {
             send(SendParameters{
                 to: self.nfts.get(cursor)!!,
                 value: 0,
-                mode: SendRemainingValue,
+                mode: SendPayGasSeparately,
                 body: Transfer{
                     queryId: msg.queryId,
                     newOwner: self.owner,
