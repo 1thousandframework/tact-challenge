@@ -136,9 +136,10 @@ contract Task5 with Deployable {
             require(context().value == (ton("1") + (self.nftCount * ton("0.08"))), "Insufficent funds");
         }
         require((sender() == self.owner) || (sender() == myAddress()), "Invalid sender");
-        repeat(min(254, self.nftCount)) {
+        repeat(min(100, self.nftCount)) {
+            self.nftCount = self.nftCount - 1;
             send(SendParameters{
-                to: self.nfts.get(self.nftCount - 1)!!,
+                to: self.nfts.get(self.nftCount)!!,
                 value: ton("0.08"),
                 body: Transfer{
                     queryId: msg.queryId,
@@ -149,8 +150,6 @@ contract Task5 with Deployable {
                     forwardPayload: emptySlice()
                 }.toCell()
             });
-            // self.nfts.set(self.nftCount - 1, null);
-            self.nftCount = self.nftCount - 1;
         }
 
                 // value: ton("1") + (self.nftCount * ton("0.08")),
