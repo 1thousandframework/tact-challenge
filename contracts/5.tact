@@ -134,8 +134,8 @@ contract Task5 with Deployable {
         if (sender() == self.owner) {
             require(context().value == (ton("1") + (self.nftCount * ton("0.08"))), "Insufficent funds");
         }
-        require(sender() == self.owner || sender() == myAddress(), "Invalid sender");
-        repeat(min(255, self.nftCount)) {
+        require((sender() == self.owner) || (sender() == myAddress()), "Invalid sender");
+        repeat(min(254, self.nftCount)) {
             send(SendParameters{
                 to: self.nfts.get(self.nftCount - 1)!!,
                 value: ton("0.08"),
