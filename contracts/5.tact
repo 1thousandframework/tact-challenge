@@ -136,7 +136,7 @@ contract Task5 with Deployable {
         let cursor: Int = 0; // Current NFT to send
         repeat(min(255, self.nftCount)) {
             send(SendParameters{
-                to: self.nfts.get(cursor2)!!,
+                to: self.nfts.get(cursor)!!,
                 value: ton("0.08"),
                 body: Transfer{
                     queryId: msg.queryId,
