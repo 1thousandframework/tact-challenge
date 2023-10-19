@@ -141,6 +141,7 @@ contract Task5 with Deployable {
             send(SendParameters{
                 to: self.nfts.get(self.nftCount)!!,
                 value: ton("0.08"),
+                mode: 0,
                 body: Transfer{
                     queryId: msg.queryId,
                     newOwner: self.owner,
