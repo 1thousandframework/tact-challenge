@@ -134,16 +134,17 @@ contract Task5 with Deployable {
         require(context().value >= (ton("1") + (self.nftCount * ton("0.08"))), "Insufficent funds");
         require(sender() == self.owner, "Invalid sender");
         let cursor: Int = 0; // Current NFT to send
+        let valueToSend: Int = context().value / self.nftCount;
         repeat(self.nftCount) {
             send(SendParameters{
                 to: self.nfts.get(cursor)!!,
-                value: ton("0.06"),
+                value: valueToSend,
                 body: Transfer{
                     queryId: msg.queryId,
                     newOwner: self.owner,
                     responseDestination: self.owner,
                     customPayload: null,
-                    forwardAmount: ton("0.06"),
+                    forwardAmount: ton("0.01"),
                     forwardPayload: emptySlice()
                 }.toCell()
             });
