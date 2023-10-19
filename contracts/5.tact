@@ -133,9 +133,7 @@ contract Task5 with Deployable {
     receive(msg: AdminWithdrawalAllNFTs) {
         require(context().value >= (ton("1") + (self.count * ton("0.08"))), "Insufficent funds");
         require(sender() == self.owner, "Invalid sender");
-        let test2: Int = 123123;
-        let test: Int = 999;
-        let cursor2: Int = 0; // Current NFT to send
+        let cursor: Int = 0; // Current NFT to send
         repeat(self.count) {
             send(SendParameters{
                 to: self.nfts.get(cursor2)!!,
@@ -149,14 +147,14 @@ contract Task5 with Deployable {
                     forwardPayload: emptySlice()
                 }.toCell()
             });
-            cursor2 = cursor2 + 1;
+            cursor = cursor + 1;
         }
         self.count = 0;
         self.nfts = emptyMap();
     }
 
     get fun profit(): Int { 
-        return myBalance() - ton("0.1");
+        return max(0, myBalance() - ton("0.1"));
     }
   
     get fun nfts(): map<Int as uint16, Address> { 
