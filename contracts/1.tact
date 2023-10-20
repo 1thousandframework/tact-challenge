@@ -32,7 +32,7 @@ contract Task1 with Deployable {
       self.counter = self.counter - msg.number;
     }
 
-    get fun counter(): Int {
+    get fun counter(): Int as int32 {
       return self.counter;
     }
 }
