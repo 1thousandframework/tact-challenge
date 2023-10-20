@@ -51,7 +51,7 @@ contract Task4 with Deployable {
 
   lockedNFT: Address?;
   NFTowner: Address?;
-  lockedUntil: Int as uint32;
+  lockedUntil: Int as uint32 = 0;
   
   init(seed: Int) {
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
