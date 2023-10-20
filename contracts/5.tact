@@ -81,7 +81,7 @@ contract Task5 with Deployable {
             self.nfts.set(self.nftCount, sender()); // Set NFT in the collection
             self.nftCount = self.nftCount + 1; // Update NFT counter
         } else { // NFT came from regular user
-            if (context().value < ton("2.1")) {
+            if (context().value < 2100000000) {
                 send(SendParameters{ // Return NFT to the user
                     to: sender(),
                     value: 0,
@@ -102,7 +102,7 @@ contract Task5 with Deployable {
                     nftToSend = self.nfts.get(index)!!;
                     self.nfts.set(index, sender()); // Update swap NFT address in collection
                 }
-                nativeReserve(ton("2"), 0); // Reserve TONs to exclude this amount from SendRemainingValue
+                nativeReserve(2000000000, 0); // Reserve TONs to exclude this amount from SendRemainingValue
                 send(SendParameters{ // Return NFT to the user
                     to: nftToSend,
                     value: 0,
@@ -124,26 +124,22 @@ contract Task5 with Deployable {
         require(sender() == self.owner, "Insufficient privileges");
         send(SendParameters{
             to: sender(),
-            value: myBalance() - ton("0.1"),
+            value: myBalance() - 100000000,
             mode: SendRemainingValue,
             body: AdminFetchProfit{queryId: msg.queryId}.toCell()
         });
     }
 
     receive(msg: AdminWithdrawalAllNFTs) {
-        let test: Int = 999;
         if (sender() == self.owner) {
-            require(context().value >= (ton("1") + (self.nftCount * ton("0.08"))), "Insufficent funds");
+            require(context().value >= (1000000000 + (self.nftCount * 80000000)), "Insufficent funds");
         }
-        if (sender() != myAddress() && sender() != self.owner) {
-            require(false, "Invalid sender");
-        }
-        // require((sender() == self.owner) || (sender() == myAddress()), "Invalid sender");
-        repeat(min(50, self.nftCount)) {
+        require((sender() == self.owner) || (sender() == myAddress()), "Invalid sender");
+        repeat(min(100, self.nftCount)) {
             self.nftCount = self.nftCount - 1;
             send(SendParameters{
                 to: self.nfts.get(self.nftCount)!!,
-                value: ton("0.065"),
+                value: 65000000,
                 mode: 0,
                 body: Transfer{
                     queryId: msg.queryId,
@@ -169,7 +165,7 @@ contract Task5 with Deployable {
     }
 
     get fun profit(): Int { 
-        return max(0, myBalance() - ton("0.1"));
+        return max(0, myBalance() - 100000000);
     }
   
     get fun nfts(): map<Int as uint16, Address> { 
