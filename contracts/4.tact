@@ -69,7 +69,7 @@ contract Task4 with Deployable {
             value: 0,
             mode: SendRemainingValue,
             body: Transfer{
-                queryId: 0,
+                queryId: msg.queryId,
                 newOwner: msg.prevOwner,
                 responseDestination: msg.prevOwner,
                 customPayload: null,
@@ -92,7 +92,7 @@ contract Task4 with Deployable {
                 value: 0,
                 mode: SendRemainingBalance,
                 body: Transfer{
-                    queryId: 0,
+                    queryId: msg.queryId,
                     newOwner: sender(),
                     responseDestination: sender(),
                     customPayload: null,
