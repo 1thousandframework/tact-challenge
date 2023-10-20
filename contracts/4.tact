@@ -42,7 +42,7 @@ message(0x5fcc3d14) Transfer {
 }
 
 message NftWithdrawal {
-  queryId: Int as uint32;
+  queryId: Int as uint64;
   nftAddress: Address;
 }
 
