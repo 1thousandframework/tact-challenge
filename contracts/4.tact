@@ -33,7 +33,7 @@ message(0x05138d91) OwnershipAssigned {
 }
 
 message(0x5fcc3d14) Transfer { 
-    queryId: Int as uint32;            
+    queryId: Int as uint64;            
     newOwner: Address; 
     responseDestination: Address; 
     customPayload: Cell?; 
@@ -42,7 +42,7 @@ message(0x5fcc3d14) Transfer {
 }
 
 message NftWithdrawal {
-  queryId: Int as uint64;
+  queryId: Int as uint32;
   nftAddress: Address;
 }
 
