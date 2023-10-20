@@ -27,7 +27,7 @@ import "@stdlib/deploy";
 */
 
 message(0x05138d91) OwnershipAssigned {
-    queryId: Int as uint64;
+    queryId: Int as uint32;
     prevOwner: Address;
     forwardPayload: Slice as remaining; 
 }
