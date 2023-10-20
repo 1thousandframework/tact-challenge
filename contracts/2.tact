@@ -13,9 +13,8 @@ import "@stdlib/deploy";
   In refund transaction, it is important to have a check that the refund message came from the admin address
 */
 
-
 message(0x44) Refund {
-  queryId: Int as uint32;
+  queryId: Int as uint64;
   sender: Address;
 }
 
@@ -27,7 +26,7 @@ contract Task2 with Deployable {
   }
   
   receive(msg: Refund) {
-    require(context().sender == self.admin, "access forbidden");
+    require(context().sender == self.admin, "e");
     send(SendParameters{
       to: msg.sender,
       value: 0,
