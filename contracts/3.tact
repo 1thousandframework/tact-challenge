@@ -75,17 +75,20 @@ message(0xf8a7ea5) TokenTransfer {
                 self.bAmount = self.bAmount + msg.amount;
             }
         } else { // Handle swap
+            let amountToSwap: Int = 0;
+            let enough: Bool = false; 
+            let addrToSend: Address = self.jettonAddressA;
             if (sender() == self.jettonAddressA) {
-                if ((self.bAmount * 1000000000 / self.aAmount) * msg.amount / 1000000000 <= self.bAmount) { // Do the swap
+                if (((self.bAmount * 1000000000 / self.aAmount) * msg.amount / 1000000000) <= self.bAmount) {   
                     self.aAmount = self.aAmount + msg.amount;
-                    self.bAmount = self.bAmount - (self.bAmount * 1000000000 / self.aAmount) * msg.amount / 1000000000;
+                    self.bAmount = self.bAmount - ((self.bAmount * 1000000000 / self.aAmount) * msg.amount / 1000000000);
                     send(SendParameters{
                         to: self.jettonAddressB,
                         value: 0,
                         mode: SendRemainingValue,
                         body: TokenTransfer{
                             queryId: 0,
-                            amount: (self.bAmount * 1000000000 / self.aAmount) * msg.amount / 1000000000,
+                            amount: ((self.bAmount * 1000000000 / self.aAmount) * msg.amount / 1000000000),
                             destination: msg.from,
                             responseDestination: myAddress(),
                             customPayload: null,
@@ -110,8 +113,8 @@ message(0xf8a7ea5) TokenTransfer {
                     });
                 }
             } else {
-                if ((self.aAmount * 1000000000 / self.bAmount) * msg.amount / 1000000000 <= self.aAmount) { // Do the swap
-                    self.aAmount = self.aAmount - (self.aAmount * 1000000000 / self.bAmount) * msg.amount / 1000000000;
+                if (((self.aAmount * 1000000000 / self.bAmount) * msg.amount / 1000000000) <= self.aAmount) { // Do the swap
+                    self.aAmount = self.aAmount - ((self.aAmount * 1000000000 / self.bAmount) * msg.amount / 1000000000);
                     self.bAmount = self.bAmount + msg.amount;
                     send(SendParameters{
                         to: self.jettonAddressA,
@@ -119,7 +122,7 @@ message(0xf8a7ea5) TokenTransfer {
                         mode: SendRemainingValue,
                         body: TokenTransfer{
                             queryId: 0,
-                            amount: (self.aAmount * 1000000000 / self.bAmount) * msg.amount / 1000000000,
+                            amount: ((self.aAmount * 1000000000 / self.bAmount) * msg.amount / 1000000000),
                             destination: msg.from,
                             responseDestination: myAddress(),
                             customPayload: null,
@@ -143,6 +146,7 @@ message(0xf8a7ea5) TokenTransfer {
                         }.toCell()
                     });
                 }
+
             }
         }
     } 
