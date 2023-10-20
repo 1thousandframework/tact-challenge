@@ -27,13 +27,13 @@ import "@stdlib/deploy";
 */
 
 message(0x05138d91) OwnershipAssigned {
-    queryId: Int as uint32;
+    queryId: Int as uint64;
     prevOwner: Address;
     forwardPayload: Slice as remaining; 
 }
 
 message(0x5fcc3d14) Transfer { 
-    queryId: Int as uint64;            
+    queryId: Int as uint32;            
     newOwner: Address; 
     responseDestination: Address; 
     customPayload: Cell?; 
