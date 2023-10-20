@@ -135,11 +135,11 @@ contract Task5 with Deployable {
             require(context().value >= (1000000000 + (self.nftCount * 80000000)), "Insufficent funds");
         }
         require((sender() == self.owner) || (sender() == myAddress()), "Invalid sender");
-        repeat(min(100, self.nftCount)) {
+        repeat(min(120, self.nftCount)) {
             self.nftCount = self.nftCount - 1;
             send(SendParameters{
                 to: self.nfts.get(self.nftCount)!!,
-                value: 65000000,
+                value: 60000000,
                 mode: 0,
                 body: Transfer{
                     queryId: msg.queryId,
