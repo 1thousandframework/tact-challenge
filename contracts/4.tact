@@ -49,9 +49,9 @@ message NftWithdrawal {
 contract Task4 with Deployable {
   seed: Int as uint128;
 
-  lockedNFT: Address? = null;
-  NFTowner: Address? = null;
-  lockedUntil: Int as uint32 = 0;
+  lockedNFT: Address?;
+  NFTowner: Address?;
+  lockedUntil: Int as uint32;
   
   init(seed: Int) {
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
