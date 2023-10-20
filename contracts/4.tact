@@ -42,7 +42,7 @@ message(0x5fcc3d14) Transfer {
 }
 
 message NftWithdrawal {
-  queryId: Int as uint64;
+  queryId: Int as uint32;
   nftAddress: Address;
 }
 
@@ -51,7 +51,7 @@ contract Task4 with Deployable {
 
   lockedNFT: Address? = null;
   NFTowner: Address? = null;
-  lockedUntil: Int = 0;
+  lockedUntil: Int as uint32 = 0;
   
   init(seed: Int) {
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
