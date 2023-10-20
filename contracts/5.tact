@@ -37,9 +37,7 @@ import "@stdlib/deploy";
      the order of NFTs in this dictionary doesn't matter
 */
 
-message AdminWithdrawalProfit {
-  queryId: Int as uint64;
-}
+message(0xb04a0dfd) AdminWithdrawalProfit {}
 
 message AdminWithdrawalAllNFTs {
   queryId: Int as uint64;
@@ -126,7 +124,7 @@ contract Task5 with Deployable {
             to: sender(),
             value: myBalance() - 100000000,
             mode: SendRemainingValue,
-            body: AdminFetchProfit{queryId: msg.queryId}.toCell()
+            body: AdminFetchProfit{queryId: 0}.toCell()
         });
     }
 
