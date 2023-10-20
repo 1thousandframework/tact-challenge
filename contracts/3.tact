@@ -56,7 +56,6 @@ message(0xf8a7ea5) TokenTransfer {
     bAmount: Int;
     jettonAddressA: Address;
     jettonAddressB: Address;
-    decimal: Int;
 
     init(admin: Address, newJettonAddressA: Address, newJettonAddressB: Address) {
         self.owner = admin;
@@ -64,7 +63,6 @@ message(0xf8a7ea5) TokenTransfer {
         self.jettonAddressB = newJettonAddressB;
         self.aAmount = 0;
         self.bAmount = 0;
-        self.decimal = 1000000000;    
     }
 
     receive(msg: TokenNotification) {
@@ -81,11 +79,11 @@ message(0xf8a7ea5) TokenTransfer {
             let enough: Bool = false; 
             let addrToSend: Address = self.jettonAddressA;
             if (sender() == self.jettonAddressA) {
-                amountToSwap = (self.bAmount * self.decimal / self.aAmount) * msg.amount / self.decimal;
+                amountToSwap = (self.bAmount * 1000000000 / self.aAmount) * msg.amount / 1000000000;
                 enough = amountToSwap <= self.bAmount;
                 addrToSend = self.jettonAddressB;
             } else {
-                amountToSwap = (self.aAmount * self.decimal / self.bAmount) * msg.amount / self.decimal;
+                amountToSwap = (self.aAmount * 1000000000 / self.bAmount) * msg.amount / 1000000000;
                 enough = amountToSwap <= self.aAmount;
             }
             if (enough) { // Do the swap
@@ -132,9 +130,9 @@ message(0xf8a7ea5) TokenTransfer {
     get fun price(jetton: Address): Int { 
         require((jetton == self.jettonAddressA) || (jetton == self.jettonAddressB), "wrong jetton address");
         if (jetton == self.jettonAddressA) {
-            return self.bAmount * self.decimal / self.aAmount;
+            return self.bAmount * 1000000000 / self.aAmount;
         } else {
-            return self.aAmount * self.decimal / self.bAmount;
+            return self.aAmount * 1000000000 / self.bAmount;
         }
     }
 
