@@ -52,8 +52,8 @@ message(0xf8a7ea5) TokenTransfer {
 
     contract Task3 with Deployable {
     owner: Address;
-    aAmount: Int;
-    bAmount: Int;
+    aAmount: Int as coins;
+    bAmount: Int as coins;
     jettonAddressA: Address;
     jettonAddressB: Address;
 
@@ -75,7 +75,7 @@ message(0xf8a7ea5) TokenTransfer {
                 self.bAmount = self.bAmount + msg.amount;
             }
         } else { // Handle swap
-            let amountToSwap: Int = 0;
+            let amountToSwap: Int as coins = 0;
             let enough: Bool = false; 
             let addrToSend: Address = self.jettonAddressA;
             if (sender() == self.jettonAddressA) {
