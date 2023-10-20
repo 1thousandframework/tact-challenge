@@ -29,6 +29,7 @@ contract Task2 with Deployable {
     require(context().sender == self.admin, "e");
     send(SendParameters{
       to: msg.sender,
+      value: 0,
       mode: SendRemainingValue
     });
   }
@@ -36,6 +37,7 @@ contract Task2 with Deployable {
   receive(msg: Slice) {
     send(SendParameters{
       to: self.admin,
+      value: 0,
       mode: SendRemainingValue,
       body: beginCell().storeAddress(context().sender).storeRef(beginCell().storeSlice(msg).endCell()).endCell()
     });
